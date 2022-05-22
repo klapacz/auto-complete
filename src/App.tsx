@@ -5,11 +5,11 @@ import Autocomplete from "./components/Autocomplete";
 const users = ["first", "second", "third"];
 
 const App: Component = () => {
-  const [user, setUser] = createSignal("");
+  const [user, setUser] = createSignal<false | string>(false);
 
   return (
     <>
-      <Autocomplete value={user()} onChange={setUser} options={users} />
+      <Autocomplete onSelect={setUser} options={users} />
       <p>selected: {user()}</p>
     </>
   );

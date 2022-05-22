@@ -1,22 +1,50 @@
-import type { Component } from "solid-js";
+import { Component, createMemo, createSignal, For, Show } from "solid-js";
 
 export type AutocompleteProps = {
   /**
    * The list of options to display in the autocomplete.
    */
   options: string[];
-  value: string;
-  onChange: (value: string) => void;
+  onSelect: (value: string | false) => void;
 };
 
 const Autocomplete: Component<AutocompleteProps> = (props) => {
+  const [text, setText] = createSignal("");
+  const [selected, setSelected] = createSignal<boolean>(false);
+
+  const options = createMemo(() =>
+    props.options.filter((option) =>
+      option.toLowerCase().startsWith(text().toLowerCase())
+    )
+  );
+
   return (
-    <p>
+    <>
       <input
-        value={props.value}
-        onInput={(e) => props.onChange(e.currentTarget.value)}
+        value={text()}
+        onInput={(e) => {
+          setSelected(false);
+          setText(e.currentTarget.value);
+        }}
       />
-    </p>
+      <Show when={!selected()}>
+        <ul>
+          <For each={options()} fallback="No options to show.">
+            {(option) => (
+              <li
+                onClick={() => {
+                  setSelected(true);
+                  setText(option);
+                  props.onSelect(option);
+                }}
+              >
+                {option}
+              </li>
+            )}
+          </For>
+        </ul>
+      </Show>
+    </>
   );
 };
 
