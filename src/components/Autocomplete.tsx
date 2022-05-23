@@ -1,14 +1,18 @@
-import { Component, createMemo, createSignal, For, Show } from "solid-js";
+import { createMemo, createSignal, For, Show, JSX } from "solid-js";
 
-export type AutocompleteProps = {
+type Option = string;
+
+interface AutocompleteProps<T extends Option> {
   /**
    * The list of options to display in the autocomplete.
    */
-  options: string[];
-  onSelect: (value: string | false) => void;
-};
+  options: T[] | ReadonlyArray<T>;
+  onSelect: (value: this["options"][number] | undefined) => void;
+}
 
-const Autocomplete: Component<AutocompleteProps> = (props) => {
+const Autocomplete = <T extends Option>(
+  props: AutocompleteProps<T>
+): JSX.Element => {
   const [text, setText] = createSignal("");
   const [selected, setSelected] = createSignal<boolean>(false);
 
@@ -34,7 +38,7 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
               <li
                 onClick={() => {
                   setSelected(true);
-                  setText(option);
+                  setText(option as string);
                   props.onSelect(option);
                 }}
               >
