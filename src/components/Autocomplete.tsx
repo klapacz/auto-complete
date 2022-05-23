@@ -29,6 +29,7 @@ const Autocomplete = <T extends Option>(
         onInput={(e) => {
           setSelected(false);
           setText(e.currentTarget.value);
+          props.onSelect(undefined);
         }}
       />
       <Show when={!selected()}>
